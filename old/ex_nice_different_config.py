@@ -1,9 +1,3 @@
-# Implementation of a simple MLP network with one hidden layer. Tested on the iris data set.
-# Requires: numpy, sklearn>=0.18.1, tensorflow>=1.0
-
-# NOTE: In order to make the code simple, we rewrite x * W_1 + b_1 = x' * W_1'
-# where x' = [x | 1] and W_1' is the matrix W_1 appended with a new row with elements b_1's.
-# Similarly, for h * W_2 + b_2
 import tensorflow as tf
 import numpy as np
 from util import generate_data_bias, plot_pred_real, plot_3d_data, plot_3d_both_functions, generation_train_test
