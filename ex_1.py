@@ -26,7 +26,7 @@ def main():
     INPUT_UNITS = 2     # Number of input nodes: 4 features and 1 bias
     HIDDEN_UNITS = 30              # Number of hidden nodes
     OUTPUT_UNITS = 1   # Number of outcomes (3 iris flowers)
-    LEARNING_RATE = 0.0001
+    LEARNING_RATE = 0.01
     SAMPLE_SIZE = 2000
     TRAIN_TEST_PROPORTION = 0.7
     RHO_CONSTANT = 0.0001
@@ -77,7 +77,7 @@ def main():
     #cost    =  (1/2.0)*tf.losses.mean_squared_error(yhat, y)
     cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0 + regularization
     test_cost = tf.reduce_mean(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
-    updates = tf.train.GradientDescentOptimizer(LEARNING_RATE).minimize(cost)
+    updates = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost)
 
     # Run SGD
     sess = tf.Session()
