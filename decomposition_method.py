@@ -14,7 +14,7 @@ def init_weights(shape, trainable=True, seed=1743734):
     """ Weight initialization """
     # weights = tf.random_normal(shape, mean=0.0847, stddev=0.4737, seed=seed
     weights = tf.truncated_normal(shape, seed=seed)
-    return tf.Variable(weights, trainable=trainable)
+    return tf.Variable(weights)
 
 
 def activation (t, sigma=5.0):
@@ -25,7 +25,7 @@ def activation (t, sigma=5.0):
 def main():
     # Layer's sizes
     INPUT_UNITS = 2     # Number of input nodes: 4 features and 1 bias
-    HIDDEN_UNITS = 30              # Number of hidden nodes
+    HIDDEN_UNITS = 100              # Number of hidden nodes
     OUTPUT_UNITS = 1   # Number of outcomes (3 iris flowers)
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -54,10 +54,13 @@ def main():
     y = tf.placeholder("float", shape=[None, OUTPUT_UNITS])
 
     # Weight initializations
+
+    decomposition = ['convex', 'non_convex']
+
     omega = {
-        'w': init_weights([INPUT_UNITS, HIDDEN_UNITS], trainable=False),
+        'w': init_weights([INPUT_UNITS, HIDDEN_UNITS]),
         'v': init_weights([HIDDEN_UNITS, OUTPUT_UNITS]),
-        'b': init_weights([HIDDEN_UNITS], trainable=False)
+        'b': init_weights([HIDDEN_UNITS])
     }
 
     pi ={
@@ -78,7 +81,9 @@ def main():
     #cost    =  (1/2.0)*tf.losses.mean_squared_error(yhat, y)
     cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0 + regularization
     test_cost = tf.reduce_mean(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
-    updates = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost)
+
+    convex = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost, var_list=[omega['v']])
+    non_convex = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost, var_list=[omega['w'], omega['b']])
 
     # Run SGD
     sess = tf.Session()
@@ -90,13 +95,23 @@ def main():
         'test': []
     }
 
+    decomp_stage = 'convex'
+
     for epoch in range(EPOCHS):
         # Train with each example
-        _, loss_training, w_opt = sess.run([updates, cost, omega['w']], feed_dict={X: train_X, y: train_y})
+        if decomp_stage == 'convex':
+            _, loss_training, w_opt_1 = sess.run([convex, cost, omega['w']],
+                                               feed_dict={X: train_X, y: train_y})
+            decomp_stage = 'non_convex'
+        else:
+            _, loss_training, w_opt_2 = sess.run([non_convex, cost, omega['w']],
+                                               feed_dict={X: train_X, y: train_y})
+            decomp_stage = 'convex'
         loss_test = sess.run([test_cost], feed_dict={X: test_X, y:test_y})
 
-        if (epoch % 50 == 0):
+        if (epoch % 50 == 1):
             print("epoch: {} loss_training: {} loss_test: {}".format(epoch, loss_training, loss_test))
+            print("norm diff", sess.run(tf.norm(tf.subtract(w_opt_1, w_opt_2))))
             y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
             y_pred = np.array(y_pred).reshape(test_y.shape)
 
@@ -119,7 +134,8 @@ def main():
 
     y_real = sess.run([yhat], feed_dict={X: train_X, y: train_y})
     y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
-
+    print("w1", w_opt_2)
+    print("w2", w_opt_1)
     plot_compare_losses(losses['train'], losses['test'])
     plot_pred_real(train_y, y_real)
     plot_pred_real(test_y, y_pred)

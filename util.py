@@ -33,7 +33,7 @@ def franke2d_tensor(x):
 def generation_train_test(size, p, a=-1e-1, b=1e-1, seed=1743734):
     np.random.seed(seed)
     x = np.random.random([size,2])
-    noise = np.random.uniform(a, b, size=size)
+    noise = np.random.uniform(a, b,  size=size)
     y = np.array([franke2d_tensor(x[i])+noise[i] for i in range(0,size)])
     return train_test_split(x, y, train_size=p)
 
