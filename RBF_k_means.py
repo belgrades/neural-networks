@@ -55,7 +55,9 @@ y = tf.placeholder("float", shape=[None, OUTPUT_UNITS])
 # Defining omega
 omega = {
     'w': tf.ones(shape=[HIDDEN_UNITS, INPUT_UNITS]),
-    'c': tf.convert_to_tensor(KMeans(n_clusters=HIDDEN_UNITS, tol=1e-5).fit(train_X).cluster_centers_, np.float32),
+    'c': tf.convert_to_tensor(KMeans(n_clusters=HIDDEN_UNITS,
+                                     tol=1e-5,
+                                     random_state=1743734).fit(train_X).cluster_centers_, np.float32),
     'v': init_weights([HIDDEN_UNITS, OUTPUT_UNITS])
 }
 
