@@ -1,31 +1,31 @@
 import tensorflow as tf
 import numpy as np
 from util import generate_data_bias, plot_pred_real, plot_3d_data
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from util import generate_data
+from time import time
 
 RANDOM_SEED = 42
 tf.set_random_seed(RANDOM_SEED)
 
 from util import generation_train_test, create_dir_images, plot_3d_both_functions, plot_compare_losses
 
-def init_weights(shape, trainable=True, seed=1743734):
+
+def init_weights(shape, trainable=True, seed=174373):
     """ Weight initialization """
     # weights = tf.random_normal(shape, mean=0.0847, stddev=0.4737, seed=seed
     weights = tf.truncated_normal(shape, seed=seed)
     return tf.Variable(weights, trainable=trainable)
 
 
-def activation (t, sigma=5.0):
-    return((1-tf.exp(-sigma*t))/(1+tf.exp(-sigma*t)))
+def activation(t, sigma=4.0):
+    return (1-tf.exp(-sigma*t))/(1+tf.exp(-sigma*t))
 
 # TODO: Rename yhat and h
+
 
 def main():
     # Layer's sizes
     INPUT_UNITS = 2     # Number of input nodes: 4 features and 1 bias
-    HIDDEN_UNITS = 30              # Number of hidden nodes
+    HIDDEN_UNITS = 80              # Number of hidden nodes
     OUTPUT_UNITS = 1   # Number of outcomes (3 iris flowers)
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -55,12 +55,12 @@ def main():
 
     # Weight initializations
     omega = {
-        'w': init_weights([INPUT_UNITS, HIDDEN_UNITS], trainable=False),
+        'w': init_weights([INPUT_UNITS, HIDDEN_UNITS]),
         'v': init_weights([HIDDEN_UNITS, OUTPUT_UNITS]),
-        'b': init_weights([HIDDEN_UNITS], trainable=False)
+        'b': init_weights([HIDDEN_UNITS])
     }
 
-    pi ={
+    pi = {
         'rho': tf.constant(RHO_CONSTANT),
         'sigma': SIGMA_CONSTANT
     }
@@ -77,7 +77,7 @@ def main():
     # Backward propagation
     #cost    =  (1/2.0)*tf.losses.mean_squared_error(yhat, y)
     cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0 + regularization
-    test_cost = tf.reduce_mean(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
+    test_cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
     updates = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost)
 
     # Run SGD
@@ -89,10 +89,11 @@ def main():
         'train': [],
         'test': []
     }
-
+    tic = time()
     for epoch in range(EPOCHS):
         # Train with each example
         _, loss_training, w_opt = sess.run([updates, cost, omega['w']], feed_dict={X: train_X, y: train_y})
+        '''
         loss_test = sess.run([test_cost], feed_dict={X: test_X, y:test_y})
 
         if (epoch % 50 == 0):
@@ -116,7 +117,8 @@ def main():
                 plot_3d_both_functions(train_X, train_y, y_pred_train,
                                        name="train{}_{}\\{}".format(str(LEARNING_RATE).replace('.', '-'), HIDDEN_UNITS,
                                                                     epoch))
-
+            '''
+    print("time: {}".format((time()-tic)/EPOCHS))
     y_real = sess.run([yhat], feed_dict={X: train_X, y: train_y})
     y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
 
@@ -131,6 +133,7 @@ def main():
     print(sess.run(omega['w']))
 
     sess.close()
+
 
 if __name__ == '__main__':
     main()

@@ -111,18 +111,19 @@ def plot_compare_losses(loss_training, loss_test, y_lim=(0.0, 1.0)):
     plt.close()
 
 
-def plot_iter_vector(vec):
+def plot_iter_vector(vec, verbose=True):
+    if verbose:
+        print("[plot iteration vector {}".format("inertia"), vec)
     plot_pred_real(range(len(vec)), vec)
 
 
 def plot_pred_real(y, y_pred, x_lim=(-0.2,1.2), y_lim=(-0.2, 1.2)):
+    print(y_pred)
     plt.scatter(np.array(y), np.array(y_pred))
     plt.plot([x_lim[0], x_lim[1]], [y_lim[0], y_lim[1]], 'k-', lw=3)
     #plt.scatter('y', 'y_pred', data=data)
     plt.xlabel('y')
     plt.ylabel('y_pred')
-    plt.xlim(x_lim)
-    plt.ylim(y_lim)
     plt.show()
     plt.close()
 
@@ -183,6 +184,7 @@ def plot_3d_both_functions(test_x1_x2, test_y, pred_y, name):
 
     plt.savefig('C:\\Users\\Giulia\\fernando\\optimization\\neural-networks\\img\\{}.png'.format(name))
     plt.close()
+
 
 def plot_3d_data_old(train_x1_x2, pred_y, test_y=None):
     train_x1, train_x2 = np.split(train_x1_x2, [1], 1)

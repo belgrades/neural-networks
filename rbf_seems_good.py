@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from sklearn.model_selection import train_test_split
 from util import generate_data_bias, plot_pred_real, plot_3d_data
+from time import time
 
 def franke2d_tensor(x):
     from numpy import exp
@@ -78,11 +79,13 @@ sess = tf.Session()
 init = tf.global_variables_initializer()
 sess.run(init)
 
+tic = time()
 for epoch in range(EPOCHS):
     _, cost_3 = sess.run([optimizer, loss_function], feed_dict={X: train_X, y: train_y})
-    loss_training = sess.run([loss_function], feed_dict={X: test_X, y:test_y})
-    print("\r epoch: {} loss_training: {} loss_test: {}".format(epoch, cost_3, loss_training), end="")
+    #loss_training = sess.run([loss_function], feed_dict={X: test_X, y:test_y})
+    #print("\r epoch: {} loss_training: {} loss_test: {}".format(epoch, cost_3, loss_training), end="")
 
+print("time: {}".format((time()-tic)/EPOCHS))
 print("centers ", sess.run(omega['c']))
 print("v", sess.run(omega['v']))
 

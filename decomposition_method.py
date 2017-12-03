@@ -1,9 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from util import generate_data_bias, plot_pred_real, plot_3d_data
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from util import generate_data
+from time import time
 
 RANDOM_SEED = 42
 tf.set_random_seed(RANDOM_SEED)
@@ -79,8 +77,7 @@ def main():
     yhat = tf.matmul(h, omega['v'])
 
     # Backward propagation
-    #cost    =  (1/2.0)*tf.losses.mean_squared_error(yhat, y)
-    cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0 + regularization
+    cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y))))/2.0 + regularization
     test_cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
 
     convex = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost, var_list=[omega['v']])
@@ -97,16 +94,17 @@ def main():
     }
 
     decomp_stage = 'convex'
-
+    tic = time()
     for epoch in range(EPOCHS):
         _, loss_training, w_opt_1 = sess.run([convex, cost, omega['w']],
                                                feed_dict={X: train_X, y: train_y})
         _, loss_training, w_opt_2 = sess.run([non_convex, cost, omega['w']],
                                                feed_dict={X: train_X, y: train_y})
         loss_test = sess.run([test_cost], feed_dict={X: test_X, y:test_y})
-
+        '''
         if epoch % 50 == 1:
             print("epoch: {} loss_training: {} loss_test: {}".format(epoch, loss_training, loss_test))
+            print("shape {}".format(sess.run(tf.shape(omega['v']))))
             print("norm diff", sess.run(tf.norm(tf.subtract(w_opt_1, w_opt_2))))
             y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
             y_pred = np.array(y_pred).reshape(test_y.shape)
@@ -127,7 +125,8 @@ def main():
                 plot_3d_both_functions(train_X, train_y, y_pred_train,
                                        name="train{}_{}\\{}".format(str(LEARNING_RATE).replace('.', '-'), HIDDEN_UNITS,
                                                                     epoch))
-
+        '''
+    print("time: {}".format((time()-tic)/EPOCHS))
     y_real = sess.run([yhat], feed_dict={X: train_X, y: train_y})
     y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
     print("w1", w_opt_2)
