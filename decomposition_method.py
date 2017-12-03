@@ -17,15 +17,16 @@ def init_weights(shape, trainable=True, seed=1743734):
     return tf.Variable(weights)
 
 
-def activation (t, sigma=5.0):
-    return((1-tf.exp(-sigma*t))/(1+tf.exp(-sigma*t)))
+def activation(t, sigma=5.0):
+    return(1-tf.exp(-sigma*t))/(1+tf.exp(-sigma*t))
 
 # TODO: Rename yhat and h
+
 
 def main():
     # Layer's sizes
     INPUT_UNITS = 2     # Number of input nodes: 4 features and 1 bias
-    HIDDEN_UNITS = 100              # Number of hidden nodes
+    HIDDEN_UNITS = 40             # Number of hidden nodes
     OUTPUT_UNITS = 1   # Number of outcomes (3 iris flowers)
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -80,7 +81,7 @@ def main():
     # Backward propagation
     #cost    =  (1/2.0)*tf.losses.mean_squared_error(yhat, y)
     cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0 + regularization
-    test_cost = tf.reduce_mean(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
+    test_cost = tf.reduce_sum(tf.square(tf.norm(tf.subtract(yhat, y)))) / 2.0
 
     convex = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost, var_list=[omega['v']])
     non_convex = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cost, var_list=[omega['w'], omega['b']])
@@ -98,18 +99,13 @@ def main():
     decomp_stage = 'convex'
 
     for epoch in range(EPOCHS):
-        # Train with each example
-        if decomp_stage == 'convex':
-            _, loss_training, w_opt_1 = sess.run([convex, cost, omega['w']],
+        _, loss_training, w_opt_1 = sess.run([convex, cost, omega['w']],
                                                feed_dict={X: train_X, y: train_y})
-            decomp_stage = 'non_convex'
-        else:
-            _, loss_training, w_opt_2 = sess.run([non_convex, cost, omega['w']],
+        _, loss_training, w_opt_2 = sess.run([non_convex, cost, omega['w']],
                                                feed_dict={X: train_X, y: train_y})
-            decomp_stage = 'convex'
         loss_test = sess.run([test_cost], feed_dict={X: test_X, y:test_y})
 
-        if (epoch % 50 == 1):
+        if epoch % 50 == 1:
             print("epoch: {} loss_training: {} loss_test: {}".format(epoch, loss_training, loss_test))
             print("norm diff", sess.run(tf.norm(tf.subtract(w_opt_1, w_opt_2))))
             y_pred = sess.run([yhat], feed_dict={X: test_X, y: test_y})
@@ -147,6 +143,7 @@ def main():
     print(sess.run(omega['w']))
 
     sess.close()
+
 
 if __name__ == '__main__':
     main()
