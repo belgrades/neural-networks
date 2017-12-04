@@ -17,7 +17,7 @@ def franke2d_tensor(x):
     return t1+t2+t3+t4
 
 
-def g(t, sigma=4.0):
+def g(t, sigma=1.0):
     return (1-tf.exp(-sigma*t))/(1+tf.exp(-sigma*t))
 
 

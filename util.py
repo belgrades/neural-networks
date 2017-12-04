@@ -22,6 +22,7 @@ def create_dir_images(names):
     if not os.path.exists(names['test_solo']):
         os.makedirs(names['test_solo'])
 
+
 def franke2d_tensor(x):
     from numpy import exp
     t1 = 0.75*exp(-(9*x[0]-2)**2/4-(9*x[1]-2)**2/4)
@@ -30,65 +31,36 @@ def franke2d_tensor(x):
     t4 = -0.2*exp(-(9*x[0]-4)**2-(9*x[1]-7)**2)
     return t1+t2+t3+t4
 
+
 def generation_train_test(size, p, a=-1e-1, b=1e-1, seed=1743734):
     np.random.seed(seed)
     x = np.random.random([size,2])
     noise = np.random.uniform(a, b,  size=size)
     y = np.array([franke2d_tensor(x[i])+noise[i] for i in range(0,size)])
+    print("good", y.shape, x.shape)
     return train_test_split(x, y, train_size=p)
 
-def generate_data(n=100, a=-1e-1, b=1e-1, seed=1743734):
+
+def generate_train_test(n=100, p=0.7, a=-1e-1, b=1e-1, seed=1743734):
+    np.random.seed(seed)
+
     # Generate the Columns x1 x2 from uniform([0,1]x[0,1])
-    data = np.random.uniform(size = [n, 2],
-                             low=0,
-                             high=1)
+    X = np.random.uniform(size=[n, 2],
+                          low=0,
+                          high=1)
     
     # Generate 1 as franke2d(x1, x2)
-    y = np.reshape(list(map(franke2d_tensor, data)), (n, 1))
+    y = np.reshape(list(map(franke2d_tensor, X)), n)
     
     # Generate noise shape (100, 1) from uniform(a, b)
-    noise = np.random.uniform(size = [n, 1],
+    noise = np.random.uniform(size=n,
                               low=a,
                               high=b)
     
     # Adding noise to y
-    w_noise = y + noise
+    y = y + noise
 
-    final = np.concatenate((data, w_noise), 1)
-
-    return final, w_noise
-
-
-def generate_data_bias(n=100, a=-1e-1, b=1e-1, RANDOM_SEED=1743734):
-    """
-    Function to generate the data adding the bias term.
-    :param n: 
-    :param a: 
-    :param b: 
-    :param seed: 
-    :return: 
-    """
-    # Generate the Columns x1 x2 from uniform([0,1]x[0,1])
-
-
-    all_X= np.random.uniform(size=[n, 2],
-                             low=0,
-                             high=1)
-
-    # Generate 1 as franke2d(x1, x2)
-    y = np.reshape(list(map(franke2d_tensor, all_X)), (n, 1))
-
-    # Generate noise shape (100, 1) from uniform(a, b)
-    noise = np.random.uniform(size=[n, 1],
-                              low=a,
-                              high=b)
-
-    # Adding noise to y
-    all_Y = y + noise
-
-    # Adding the bias term
-
-    return train_test_split(all_X, all_Y, test_size=0.33, random_state=RANDOM_SEED)
+    return train_test_split(X, y, train_size=p)
 
 
 def split_test_train(dataset, size=30):
