@@ -203,7 +203,7 @@ def plot_pred_real(y, y_pred,
     plt.close()
 
 
-def plot_3d_data(train_x1_x2, pred_y, test_y=None, save=False, name=None):
+def plot_3d_data(train_x1_x2, pred_y, test_y=None, save=False, name=None, title=""):
     train_x1, train_x2 = np.split(train_x1_x2,[1], 1)
     n = train_x1.shape[0]
 
@@ -221,6 +221,7 @@ def plot_3d_data(train_x1_x2, pred_y, test_y=None, save=False, name=None):
                     cmap=cm.coolwarm)
 
     ax.scatter(train_x1, train_x2, pred_y)
+    plt.title(title)
 
     if save:
         plt.savefig('C:\\Users\\Giulia\\fernando\\optimization\\neural-networks\\img\\{}.png'.format(name))

@@ -12,7 +12,7 @@ def exercise_1_1(output_file):
     # 1. Parameters using values of N, rho and sigma
 
     INPUT_UNITS = 2
-    HIDDEN_UNITS = 80
+    HIDDEN_UNITS = 40
     OUTPUT_UNITS = 1
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -20,7 +20,7 @@ def exercise_1_1(output_file):
     RHO_CONSTANT = 0.00001
     SIGMA_CONSTANT = 4.0
     GENERATE_IMAGES = True
-    EPOCHS = 20000
+    EPOCHS = 10000
 
     # 2. Generating dataset
 
@@ -60,9 +60,9 @@ def exercise_1_1(output_file):
         plot_pred_real(test_y, y_pred_plot,
                        xlab="real values of y",
                        ylab="predictions of y",
-                       title="Scatter plot of real values against predicted values")
-        plot_3d_data(test_X, test_y)
-        plot_3d_data(test_X, y_pred_plot)
+                       title="MLP full scatter plot of real values against predicted values")
+        plot_3d_data(test_X, test_y, title="Real Franke2d(x1, x2) function in test data")
+        plot_3d_data(test_X, y_pred_plot, title="Approximation of Franke2d(x1, x2) using MLP")
 
     # 5.2
 
@@ -88,7 +88,7 @@ def excercise_1_2(output_file):
     # 1. Parameters using values of N, rho and sigma
 
     INPUT_UNITS = 2
-    HIDDEN_UNITS = 50
+    HIDDEN_UNITS = 40
     OUTPUT_UNITS = 1
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -96,7 +96,7 @@ def excercise_1_2(output_file):
     RHO_CONSTANT = 0.00001
     SIGMA_CONSTANT = 0.005
     GENERATE_IMAGES = True
-    EPOCHS = 20000
+    EPOCHS = 4000
 
     # 2. Generating dataset
 
@@ -137,9 +137,9 @@ def excercise_1_2(output_file):
         plot_pred_real(test_y, y_pred_plot,
                        xlab="real values of y",
                        ylab="predictions of y",
-                       title="Scatter plot of real values against predicted values")
-        plot_3d_data(test_X, test_y)
-        plot_3d_data(test_X, y_pred_plot)
+                       title="RBF full scatter plot of real values against predicted values")
+        plot_3d_data(test_X, test_y, title="Real Franke2d(x1, x2) function in test data")
+        plot_3d_data(test_X, y_pred_plot, title="Approximation of Franke2d(x1, x2) using RBF")
 
     # 6. Compute MSE
     mse_training, mse_test = generate_mse_functions(y_hat, y, SAMPLE_SIZE, TRAIN_TEST_PROPORTION)

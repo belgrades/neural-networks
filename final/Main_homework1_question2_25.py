@@ -12,7 +12,7 @@ def exercise_2_1(output_file):
     # 1. Parameters using values of N, rho and sigma
 
     INPUT_UNITS = 2
-    HIDDEN_UNITS = 80
+    HIDDEN_UNITS = 15
     OUTPUT_UNITS = 1
     LEARNING_RATE = 0.01
     SAMPLE_SIZE = 1000
@@ -20,7 +20,7 @@ def exercise_2_1(output_file):
     RHO_CONSTANT = 0.00001
     SIGMA_CONSTANT = 4.0
     GENERATE_IMAGES = True
-    EPOCHS = 20000
+    EPOCHS = 4000
 
     # 2. Generating dataset
 
@@ -30,10 +30,10 @@ def exercise_2_1(output_file):
 
     # 3. Model definition
     X, y, omega, pi, con = generate_extreme_mlp_variables(INPUT_UNITS=INPUT_UNITS,
-                                                          OUTPUT_UNITS=OUTPUT_UNITS,
-                                                          HIDDEN_UNITS=HIDDEN_UNITS,
-                                                          RHO_CONSTANT=RHO_CONSTANT,
-                                                          SIGMA_CONSTANT=SIGMA_CONSTANT)
+                                                            OUTPUT_UNITS=OUTPUT_UNITS,
+                                                            HIDDEN_UNITS=HIDDEN_UNITS,
+                                                            RHO_CONSTANT=RHO_CONSTANT,
+                                                            SIGMA_CONSTANT=SIGMA_CONSTANT)
 
     y_hat = generate_mlp_y_hat_function(X, omega, pi)
     train_loss, test_loss = generate_generic_loss_functions(y_hat, y, pi, con)
@@ -60,7 +60,7 @@ def exercise_2_1(output_file):
         plot_pred_real(test_y, y_pred_plot,
                        xlab="real values of y",
                        ylab="predictions of y",
-                       title="Scatter plot of real values against predicted values")
+                       title="Random w, p MLP scatter plot of real values against predicted values")
         plot_3d_data(test_X, test_y)
         plot_3d_data(test_X, y_pred_plot)
 
@@ -92,7 +92,7 @@ def exercise_2_2(output_file):
     RHO_CONSTANT = 0.00001
     SIGMA_CONSTANT = 0.005
     GENERATE_IMAGES = True
-    EPOCHS = 20000
+    EPOCHS = 4000
 
     # 2. Generating dataset
 
@@ -133,7 +133,7 @@ def exercise_2_2(output_file):
         plot_pred_real(test_y, y_pred_plot,
                        xlab="real values of y",
                        ylab="predictions of y",
-                       title="Scatter plot of real values against predicted values")
+                       title="KMeans RBF scatter plot of real values against predicted values")
         plot_3d_data(test_X, test_y)
         plot_3d_data(test_X, y_pred_plot)
 
