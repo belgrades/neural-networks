@@ -101,9 +101,17 @@ def train_mlp(sess, optimizer, omega, X, y,  train_X, train_y, EPOCHS=10000, COM
     tic = time()
     for epoch in range(EPOCHS):
         # Train with each example
-        _, v_opt = sess.run([optimizer, omega[v]], feed_dict={X: train_X, y: train_y})
+        _ = sess.run([optimizer], feed_dict={X: train_X, y: train_y})
     toc = time()-tic
 
-    return v_opt, toc
+    return toc
+
+
+def predict_mlp(sess, y_hat, X, test_X):
+    return sess.run([y_hat], feed_dict={X: test_X})
+
+
+def compute_mse_test(sess, test_loss, X, y, test_X, test_y):
+    return sess.run([test_loss], feed_dict={X: test_X, y: test_y})
 
 

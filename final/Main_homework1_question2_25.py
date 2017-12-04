@@ -2,6 +2,7 @@ from final.Functions_homework1_question2_25 import generate_train_test, generate
 from final.Functions_homework1_question2_25 import generate_mlp_y_hat_function, generate_mlp_loss_functions
 from final.Functions_homework1_question2_25 import generate_mlp_optimizer
 from final.Functions_homework1_question2_25 import init_tensorflow_session, train_mlp
+from final.Functions_homework1_question2_25 import predict_mlp, compute_mse_test
 import numpy as np
 
 
@@ -38,11 +39,16 @@ if __name__ == "__main__":
     sess = init_tensorflow_session()
 
     # 4. Training MLP
+    # TODO: add other outputs
+    toc = train_mlp(sess, optimizer, train_loss, X, y, train_X, train_y)
+    print("Training loss Time: {}".format(toc))
 
-    loss, toc = train_mlp(sess, optimizer, train_loss, X, y, train_X, train_y)
-    print("Training loss: {} Time: {}".format(loss, toc))
     # 5. Predictions over test set
+    y_pred = predict_mlp(sess, y_hat, X, test_X)
+    print("Predictions are: ", y_pred)
 
     # 6. Compute MSE
+    mse_test = compute_mse_test(sess, test_loss, X, y, test_X, test_y)
+    print("MSE in test is: {}".format(mse_test))
 
     # 7. Print to output file
